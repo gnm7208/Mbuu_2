@@ -49,3 +49,33 @@ class Dealership(Base):
             return session.query(cls).all()
         finally:
             session.close()
+    
+    @classmethod
+    def find_by_id(cls, dealership_id):
+        """Find dealership by ID"""
+        session = get_session()
+        try:
+            return session.query(cls).filter(cls.id == dealership_id).first()
+        finally:
+            session.close()
+    
+    @classmethod
+    def find_by_admin(cls, admin_id):
+        """Find dealerships by admin ID"""
+        session = get_session()
+        try:
+            return session.query(cls).filter(cls.admin_id == admin_id).all()
+        finally:
+            session.close()
+    
+    def delete(self):
+        """Delete this dealership"""
+        session = get_session()
+        try:
+            session.delete(self)
+            session.commit()
+        except Exception as e:
+            session.rollback()
+            raise e
+        finally:
+            session.close()
