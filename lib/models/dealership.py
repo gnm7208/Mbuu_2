@@ -14,3 +14,13 @@ class Dealership(Base):
     admin = relationship("User", back_populates="dealerships")
     cars = relationship("Car", back_populates="dealership", cascade="all, delete-orphan")
     sales = relationship("Sale", back_populates="dealership")
+    
+    @property
+    def car_count(self):
+        """Return number of cars in dealership"""
+        return len(self.cars)
+    
+    @property
+    def total_sales(self):
+        """Return total number of sales"""
+        return len(self.sales)
