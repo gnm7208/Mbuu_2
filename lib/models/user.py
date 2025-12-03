@@ -45,3 +45,33 @@ class User(Base):
             return session.query(cls).all()
         finally:
             session.close()
+    
+    @classmethod
+    def find_by_id(cls, user_id):
+        """Find user by ID"""
+        session = get_session()
+        try:
+            return session.query(cls).filter(cls.id == user_id).first()
+        finally:
+            session.close()
+    
+    @classmethod
+    def find_by_username(cls, username):
+        """Find user by username"""
+        session = get_session()
+        try:
+            return session.query(cls).filter(cls.username == username).first()
+        finally:
+            session.close()
+    
+    def delete(self):
+        """Delete this user"""
+        session = get_session()
+        try:
+            session.delete(self)
+            session.commit()
+        except Exception as e:
+            session.rollback()
+            raise e
+        finally:
+            session.close()
