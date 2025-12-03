@@ -20,3 +20,28 @@ class User(Base):
         """Return formatted user information"""
         role = "Admin" if self.is_admin else "Customer"
         return f"User: {self.username} ({self.email}) - {role}"
+    
+    @classmethod
+    def create(cls, username, email, password, is_admin=False):
+        """Create a new user"""
+        session = get_session()
+        try:
+            user = cls(username=username, email=email, password=password, is_admin=is_admin)
+            session.add(user)
+            session.commit()
+            session.refresh(user)
+            return user
+        except Exception as e:
+            session.rollback()
+            raise e
+        finally:
+            session.close()
+    
+    @classmethod
+    def get_all(cls):
+        """Get all users"""
+        session = get_session()
+        try:
+            return session.query(cls).all()
+        finally:
+            session.close()
