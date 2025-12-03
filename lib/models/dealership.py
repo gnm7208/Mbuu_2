@@ -24,3 +24,28 @@ class Dealership(Base):
     def total_sales(self):
         """Return total number of sales"""
         return len(self.sales)
+    
+    @classmethod
+    def create(cls, name, location, admin_id):
+        """Create a new dealership"""
+        session = get_session()
+        try:
+            dealership = cls(name=name, location=location, admin_id=admin_id)
+            session.add(dealership)
+            session.commit()
+            session.refresh(dealership)
+            return dealership
+        except Exception as e:
+            session.rollback()
+            raise e
+        finally:
+            session.close()
+    
+    @classmethod
+    def get_all(cls):
+        """Get all dealerships"""
+        session = get_session()
+        try:
+            return session.query(cls).all()
+        finally:
+            session.close()
