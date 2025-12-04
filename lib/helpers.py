@@ -26,3 +26,31 @@ def authenticate_user():
     else:
         print("❌ Invalid credentials!")
         return False
+
+def register_user():
+    """Handle user registration"""
+    print("\n=== REGISTER ===")
+    username = input("Username: ").strip()
+    email = input("Email: ").strip()
+    password = input("Password: ").strip()
+    
+    if User.find_by_username(username):
+        print("❌ Username already exists!")
+        return False
+    
+    try:
+        user = User.create(username, email, password, False)
+        print(f"✅ Account created successfully! Welcome, {username}!")
+        return True
+    except Exception as e:
+        print(f"❌ Registration failed: {str(e)}")
+        return False
+
+def logout_user():
+    """Handle user logout"""
+    global current_user
+    if current_user:
+        print(f"👋 Goodbye, {current_user.username}!")
+        current_user = None
+    else:
+        print("❌ No user is currently logged in!")
