@@ -84,3 +84,36 @@ def delete_user():
             print("❌ User not found!")
     except ValueError:
         print("❌ Invalid user ID!")
+
+# Dealership Management Functions
+def create_dealership():
+    """Create a new dealership"""
+    if not current_user or not current_user.is_admin:
+        print("❌ Admin access required!")
+        return
+    
+    print("\n=== CREATE DEALERSHIP ===")
+    name = input("Dealership name: ").strip()
+    location = input("Location: ").strip()
+    
+    if not name or not location:
+        print("❌ Name and location are required!")
+        return
+    
+    try:
+        dealership = Dealership.create(name, location, current_user.id)
+        print(f"✅ Dealership '{name}' created successfully!")
+    except Exception as e:
+        print(f"❌ Failed to create dealership: {str(e)}")
+
+def list_dealerships():
+    """Display all dealerships"""
+    dealerships = Dealership.get_all()
+    if not dealerships:
+        print("📭 No dealerships found.")
+        return
+    
+    print("\n=== ALL DEALERSHIPS ===")
+    for dealership in dealerships:
+        print(f"ID: {dealership.id} | {dealership.name} - {dealership.location}")
+        print(f"   Admin: {dealership.admin.username} | Cars: {dealership.car_count} | Sales: {dealership.total_sales}")
