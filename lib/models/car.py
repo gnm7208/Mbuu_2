@@ -28,3 +28,29 @@ class Car(Base):
     def is_available(self):
         """Check if car is available for purchase"""
         return not self.is_sold
+    
+    @classmethod
+    def create(cls, brand, model, year, price, color, dealership_id):
+        """Create a new car"""
+        session = get_session()
+        try:
+            car = cls(brand=brand, model=model, year=year, price=price, 
+                     color=color, dealership_id=dealership_id)
+            session.add(car)
+            session.commit()
+            session.refresh(car)
+            return car
+        except Exception as e:
+            session.rollback()
+            raise e
+        finally:
+            session.close()
+    
+    @classmethod
+    def get_all(cls):
+        """Get all cars"""
+        session = get_session()
+        try:
+            return session.query(cls).all()
+        finally:
+            session.close()
