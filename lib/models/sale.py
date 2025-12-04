@@ -39,3 +39,51 @@ class Sale(Base):
             raise e
         finally:
             session.close()
+    
+    @classmethod
+    def get_all(cls):
+        """Get all sales"""
+        session = get_session()
+        try:
+            return session.query(cls).all()
+        finally:
+            session.close()
+    
+    @classmethod
+    def find_by_id(cls, sale_id):
+        """Find sale by ID"""
+        session = get_session()
+        try:
+            return session.query(cls).filter(cls.id == sale_id).first()
+        finally:
+            session.close()
+    
+    @classmethod
+    def find_by_customer(cls, customer_id):
+        """Find sales by customer ID"""
+        session = get_session()
+        try:
+            return session.query(cls).filter(cls.customer_id == customer_id).all()
+        finally:
+            session.close()
+    
+    @classmethod
+    def find_by_dealership(cls, dealership_id):
+        """Find sales by dealership ID"""
+        session = get_session()
+        try:
+            return session.query(cls).filter(cls.dealership_id == dealership_id).all()
+        finally:
+            session.close()
+    
+    def delete(self):
+        """Delete this sale"""
+        session = get_session()
+        try:
+            session.delete(self)
+            session.commit()
+        except Exception as e:
+            session.rollback()
+            raise e
+        finally:
+            session.close()
