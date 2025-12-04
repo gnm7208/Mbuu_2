@@ -17,3 +17,14 @@ class Car(Base):
     # Relationships
     dealership = relationship("Dealership", back_populates="cars")
     sale = relationship("Sale", back_populates="car", uselist=False)
+    
+    @property
+    def full_description(self):
+        """Return full car description with status"""
+        status = "SOLD" if self.is_sold else "AVAILABLE"
+        return f"{self.year} {self.brand} {self.model} - {self.color} - ${self.price:,.2f} [{status}]"
+    
+    @property
+    def is_available(self):
+        """Check if car is available for purchase"""
+        return not self.is_sold
