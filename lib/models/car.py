@@ -72,3 +72,36 @@ class Car(Base):
             return session.query(cls).filter(cls.id == car_id).first()
         finally:
             session.close()
+    
+    @classmethod
+    def find_by_brand(cls, brand):
+        """Find cars by brand"""
+        session = get_session()
+        try:
+            return session.query(cls).filter(cls.brand.ilike(f"%{brand}%")).all()
+        finally:
+            session.close()
+    
+    def mark_sold(self):
+        """Mark car as sold"""
+        session = get_session()
+        try:
+            self.is_sold = True
+            session.commit()
+        except Exception as e:
+            session.rollback()
+            raise e
+        finally:
+            session.close()
+    
+    def delete(self):
+        """Delete this car"""
+        session = get_session()
+        try:
+            session.delete(self)
+            session.commit()
+        except Exception as e:
+            session.rollback()
+            raise e
+        finally:
+            session.close()
