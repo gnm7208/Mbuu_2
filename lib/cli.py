@@ -78,5 +78,61 @@ def admin_menu():
     print("11. Logout")
     print("0. Exit")
 
+def handle_menu_choice(choice):
+    """Handle menu selection based on user type and choice"""
+    if not current_user:  # Guest menu
+        guest_choices = {
+            "1": authenticate_user,
+            "2": register_user,
+            "3": list_available_cars,
+            "4": search_cars_by_brand,
+            "5": list_dealerships,
+            "6": display_stats,
+            "0": exit_program
+        }
+        
+        if choice in guest_choices:
+            guest_choices[choice]()
+        else:
+            print("❌ Invalid choice! Please select a valid option.")
+    
+    elif current_user.is_admin:  # Admin menu
+        admin_choices = {
+            "1": create_dealership,
+            "2": view_my_dealerships,
+            "3": list_dealerships,
+            "4": delete_dealership,
+            "5": list_all_cars,
+            "6": list_available_cars,
+            "7": search_cars_by_brand,
+            "8": list_all_users,
+            "9": delete_user,
+            "10": display_stats,
+            "11": logout_user,
+            "0": exit_program
+        }
+        
+        if choice in admin_choices:
+            admin_choices[choice]()
+        else:
+            print("❌ Invalid choice! Please select a valid option.")
+    
+    else:  # Customer menu
+        customer_choices = {
+            "1": list_available_cars,
+            "2": search_cars_by_brand,
+            "3": purchase_car,
+            "4": view_my_purchases,
+            "5": list_dealerships,
+            "6": display_stats,
+            "7": logout_user,
+            "0": exit_program
+        }
+        
+        if choice in customer_choices:
+            customer_choices[choice]()
+        else:
+            print("❌ Invalid choice! Please select a valid option.")
+
 if __name__ == "__main__":
     main()
