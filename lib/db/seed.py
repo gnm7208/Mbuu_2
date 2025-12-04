@@ -84,3 +84,26 @@ def seed_cars(dealerships):
         print(f"✅ Created {num_cars} cars for {dealership.name}")
     
     return cars
+
+def seed_sales(users, cars):
+    """Create sample sales transactions"""
+    customer_users = [u for u in users if not u.is_admin]
+    available_cars = [c for c in cars if not c.is_sold]
+    
+    num_sales = min(15, len(available_cars))
+    sales = []
+    
+    for _ in range(num_sales):
+        customer = random.choice(customer_users)
+        car = random.choice(available_cars)
+        available_cars.remove(car)
+        
+        sale_price = car.price * random.uniform(0.95, 1.05)
+        
+        sale = Sale.create(customer.id, car.id, car.dealership_id, sale_price)
+        car.mark_sold()
+        sales.append(sale)
+        
+        print(f"✅ Created sale: {customer.username} bought {car.brand} {car.model}")
+    
+    return sales
