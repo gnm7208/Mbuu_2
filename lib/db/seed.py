@@ -107,3 +107,24 @@ def seed_sales(users, cars):
         print(f"✅ Created sale: {customer.username} bought {car.brand} {car.model}")
     
     return sales
+
+def seed_database():
+    """Main seeding function"""
+    print("🌱 Starting database seeding...")
+    
+    create_tables()
+    
+    users = seed_users()
+    dealerships = seed_dealerships(users)
+    cars = seed_cars(dealerships)
+    sales = seed_sales(users, cars)
+    
+    print(f"\n🎉 Database seeded successfully!")
+    print(f"📊 Summary:")
+    print(f"   - Users: {len(users)} ({len([u for u in users if u.is_admin])} admins, {len([u for u in users if not u.is_admin])} customers)")
+    print(f"   - Dealerships: {len(dealerships)}")
+    print(f"   - Cars: {len(cars)} ({len([c for c in cars if c.is_sold])} sold, {len([c for c in cars if not c.is_sold])} available)")
+    print(f"   - Sales: {len(sales)}")
+
+if __name__ == "__main__":
+    seed_database()
