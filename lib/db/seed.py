@@ -32,3 +32,23 @@ def seed_users():
         print(f"✅ Created {'admin' if is_admin else 'user'}: {username}")
     
     return users
+
+def seed_dealerships(users):
+    """Create sample dealerships"""
+    admin_users = [u for u in users if u.is_admin]
+    
+    dealerships_data = [
+        ("Premium Motors", "123 Main St, New York, NY"),
+        ("Elite Auto Sales", "456 Oak Ave, Los Angeles, CA"),
+        ("Luxury Car Hub", "789 Pine Rd, Chicago, IL"),
+        ("Metro Auto Center", "321 Elm St, Houston, TX"),
+    ]
+    
+    dealerships = []
+    for name, location in dealerships_data:
+        admin = random.choice(admin_users)
+        dealership = Dealership.create(name, location, admin.id)
+        dealerships.append(dealership)
+        print(f"✅ Created dealership: {name} (Admin: {admin.username})")
+    
+    return dealerships
