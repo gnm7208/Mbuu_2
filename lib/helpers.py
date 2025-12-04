@@ -54,3 +54,33 @@ def logout_user():
         current_user = None
     else:
         print("❌ No user is currently logged in!")
+
+# User Management Functions
+def list_all_users():
+    """Display all users"""
+    users = User.get_all()
+    if not users:
+        print("📭 No users found.")
+        return
+    
+    print("\n=== ALL USERS ===")
+    for user in users:
+        print(f"ID: {user.id} | {user.full_info}")
+
+def delete_user():
+    """Delete a user by ID"""
+    if not current_user or not current_user.is_admin:
+        print("❌ Admin access required!")
+        return
+    
+    list_all_users()
+    try:
+        user_id = int(input("\nEnter user ID to delete: "))
+        user = User.find_by_id(user_id)
+        if user:
+            user.delete()
+            print(f"✅ User {user.username} deleted successfully!")
+        else:
+            print("❌ User not found!")
+    except ValueError:
+        print("❌ Invalid user ID!")
