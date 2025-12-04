@@ -196,3 +196,44 @@ def search_cars_by_brand():
     for car in cars:
         print(f"ID: {car.id} | {car.full_description}")
         print(f"   Dealership: {car.dealership.name}")
+
+def purchase_car():
+    """Allow customer to purchase a car"""
+    if not current_user:
+        print("❌ Please login first!")
+        return
+    
+    if current_user.is_admin:
+        print("❌ Admins cannot purchase cars!")
+        return
+    
+    list_available_cars()
+    
+    try:
+        car_id = int(input("\nEnter car ID to purchase: "))
+        car = Car.find_by_id(car_id)
+        
+        if not car:
+            print("❌ Car not found!")
+            return
+        
+        if car.is_sold:
+            print("❌ Car is already sold!")
+            return
+        
+        print(f"\n🚗 Car Details: {car.full_description}")
+        print(f"📍 Dealership: {car.dealership.name} - {car.dealership.location}")
+        
+        confirm = input(f"\nConfirm purchase for ${car.price:,.2f}? (y/n): ").lower()
+        if confirm != 'y':
+            print("❌ Purchase cancelled.")
+            return
+        
+        sale = Sale.create(current_user.id, car.id, car.dealership_id, car.price)
+        car.mark_sold()
+        
+        print(f"🎉 Congratulations! You purchased the {car.year} {car.brand} {car.model}!")
+        print(f"💰 Total paid: ${sale.sale_price:,.2f}")
+        
+    except ValueError:
+        print("❌ Invalid car ID!")
