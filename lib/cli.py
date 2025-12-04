@@ -3,7 +3,7 @@
 from helpers import (
     exit_program, authenticate_user, register_user, logout_user,
     list_all_users, delete_user, create_dealership, list_dealerships,
-    view_my_dealerships, delete_dealership, list_all_cars,
+    view_my_dealerships, delete_dealership, add_car, list_all_cars,
     list_available_cars, search_cars_by_brand, purchase_car,
     view_my_purchases, display_stats, current_user
 )
@@ -67,15 +67,16 @@ def admin_menu():
     print("3. View All Dealerships")
     print("4. Delete Dealership")
     print("\n🚗 CAR MANAGEMENT:")
-    print("5. View All Cars")
-    print("6. View Available Cars")
-    print("7. Search Cars by Brand")
+    print("5. Add Car to Inventory")
+    print("6. View All Cars")
+    print("7. View Available Cars")
+    print("8. Search Cars by Brand")
     print("\n👥 USER MANAGEMENT:")
-    print("8. View All Users")
-    print("9. Delete User")
+    print("9. View All Users")
+    print("10. Delete User")
     print("\n📊 SYSTEM:")
-    print("10. System Statistics")
-    print("11. Logout")
+    print("11. System Statistics")
+    print("12. Logout")
     print("0. Exit")
 
 def handle_menu_choice(choice):
@@ -102,13 +103,14 @@ def handle_menu_choice(choice):
             "2": view_my_dealerships,
             "3": list_dealerships,
             "4": delete_dealership,
-            "5": list_all_cars,
-            "6": list_available_cars,
-            "7": search_cars_by_brand,
-            "8": list_all_users,
-            "9": delete_user,
-            "10": display_stats,
-            "11": logout_user,
+            "5": add_car,
+            "6": list_all_cars,
+            "7": list_available_cars,
+            "8": search_cars_by_brand,
+            "9": list_all_users,
+            "10": delete_user,
+            "11": display_stats,
+            "12": logout_user,
             "0": exit_program
         }
         
