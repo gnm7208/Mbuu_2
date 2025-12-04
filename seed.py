@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
 
-from faker import Faker
-import random
 import sys
 import os
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+sys.path.append(os.path.join(os.path.dirname(__file__), 'lib'))
 
+from faker import Faker
+import random
 from models import engine, Base
 from models.user import User
 from models.dealership import Dealership
@@ -15,12 +15,10 @@ from models.sale import Sale
 fake = Faker()
 
 def create_tables():
-    """Create all database tables"""
     Base.metadata.create_all(bind=engine)
     print("✅ Database tables created successfully!")
 
 def seed_users():
-    """Create sample users including admins and customers"""
     users_data = [
         ("admin1", "admin1@mbuu.com", "password123", True),
         ("admin2", "admin2@mbuu.com", "password123", True),
@@ -38,7 +36,6 @@ def seed_users():
     return users
 
 def seed_dealerships(users):
-    """Create sample dealerships"""
     admin_users = [u for u in users if u.is_admin]
     
     dealerships_data = [
@@ -58,7 +55,6 @@ def seed_dealerships(users):
     return dealerships
 
 def seed_cars(dealerships):
-    """Create sample car inventory"""
     car_brands = ["Toyota", "Honda", "BMW", "Mercedes", "Audi", "Ford", "Chevrolet", "Nissan"]
     car_models = {
         "Toyota": ["Camry", "Corolla", "RAV4", "Prius"],
@@ -90,7 +86,6 @@ def seed_cars(dealerships):
     return cars
 
 def seed_sales(users, cars):
-    """Create sample sales transactions"""
     customer_users = [u for u in users if not u.is_admin]
     available_cars = [c for c in cars if not c.is_sold]
     
@@ -102,7 +97,7 @@ def seed_sales(users, cars):
         car = random.choice(available_cars)
         available_cars.remove(car)
         
-        sale_price = car.price * random.uniform(0.95, 1.05)
+        sale_price = round(car.price * random.uniform(0.95, 1.05), 2)
         
         sale = Sale.create(customer.id, car.id, car.dealership_id, sale_price)
         car.mark_sold()
@@ -113,7 +108,6 @@ def seed_sales(users, cars):
     return sales
 
 def seed_database():
-    """Main seeding function"""
     print("🌱 Starting database seeding...")
     
     create_tables()

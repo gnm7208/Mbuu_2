@@ -29,7 +29,7 @@ class Sale(Base):
         session = get_session()
         try:
             sale = cls(customer_id=customer_id, car_id=car_id, 
-                      dealership_id=dealership_id, sale_price=sale_price)
+                      dealership_id=dealership_id, sale_price=round(sale_price, 2))
             session.add(sale)
             session.commit()
             session.refresh(sale)
