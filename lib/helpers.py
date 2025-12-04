@@ -279,3 +279,43 @@ def display_stats():
     if sales:
         total_revenue = sum(sale.sale_price for sale in sales)
         print(f"💵 Total Revenue: ${total_revenue:,.2f}")
+
+def add_car():
+    """Add a new car to dealership inventory"""
+    if not current_user or not current_user.is_admin:
+        print("❌ Admin access required!")
+        return
+    
+    dealerships = Dealership.find_by_admin(current_user.id)
+    if not dealerships:
+        print("❌ You must own a dealership to add cars!")
+        return
+    
+    print("\n=== ADD CAR ===")
+    print("Your dealerships:")
+    for i, dealership in enumerate(dealerships, 1):
+        print(f"{i}. {dealership.name}")
+    
+    try:
+        choice = int(input("Select dealership (number): ")) - 1
+        if choice < 0 or choice >= len(dealerships):
+            print("❌ Invalid selection!")
+            return
+        
+        dealership = dealerships[choice]
+        
+        brand = input("Car brand: ").strip()
+        model = input("Car model: ").strip()
+        year = int(input("Year: "))
+        price = float(input("Price: $"))
+        color = input("Color: ").strip()
+        
+        if not all([brand, model, color]) or year < 1900 or price <= 0:
+            print("❌ Invalid car details!")
+            return
+        
+        car = Car.create(brand, model, year, price, color, dealership.id)
+        print(f"✅ {year} {brand} {model} added to {dealership.name}!")
+        
+    except (ValueError, IndexError):
+        print("❌ Invalid input!")
