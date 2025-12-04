@@ -237,3 +237,45 @@ def purchase_car():
         
     except ValueError:
         print("❌ Invalid car ID!")
+
+def view_my_purchases():
+    """View customer's purchase history"""
+    if not current_user:
+        print("❌ Please login first!")
+        return
+    
+    sales = Sale.find_by_customer(current_user.id)
+    if not sales:
+        print("📭 You haven't made any purchases yet.")
+        return
+    
+    print(f"\n=== {current_user.username.upper()}'S PURCHASES ===")
+    total_spent = 0
+    for sale in sales:
+        print(f"🚗 {sale.car.year} {sale.car.brand} {sale.car.model}")
+        print(f"   Price: ${sale.sale_price:,.2f} | Date: {sale.sale_date.strftime('%Y-%m-%d')}")
+        print(f"   From: {sale.dealership.name}")
+        total_spent += sale.sale_price
+    
+    print(f"\n💰 Total spent: ${total_spent:,.2f}")
+
+def display_stats():
+    """Display system statistics"""
+    users = User.get_all()
+    dealerships = Dealership.get_all()
+    cars = Car.get_all()
+    sales = Sale.get_all()
+    
+    print("\n=== MBUU STATISTICS ===")
+    print(f"👥 Total Users: {len(users)}")
+    print(f"   - Admins: {len([u for u in users if u.is_admin])}")
+    print(f"   - Customers: {len([u for u in users if not u.is_admin])}")
+    print(f"🏢 Total Dealerships: {len(dealerships)}")
+    print(f"🚗 Total Cars: {len(cars)}")
+    print(f"   - Available: {len([c for c in cars if not c.is_sold])}")
+    print(f"   - Sold: {len([c for c in cars if c.is_sold])}")
+    print(f"💰 Total Sales: {len(sales)}")
+    
+    if sales:
+        total_revenue = sum(sale.sale_price for sale in sales)
+        print(f"💵 Total Revenue: ${total_revenue:,.2f}")
