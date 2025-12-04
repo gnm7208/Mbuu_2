@@ -26,9 +26,31 @@ This CLI application solves the real-world problem of managing car dealership op
 4. Initialize database: `python lib/db/seed.py`
 5. Run the application: `python lib/cli.py`
 
+## Database Schema
+
+The application uses SQLAlchemy ORM with the following models:
+- **User**: Manages customer accounts and authentication (one-to-many with Dealership and Sale)
+- **Dealership**: Represents car dealerships managed by admins (one-to-many with Car and Sale)
+- **Car**: Individual car inventory items (one-to-one with Sale)
+- **Sale**: Transaction records between users and dealerships
+
 ## Usage
 
 The application provides different interfaces based on user role:
-- **Guests**: Can browse cars and register/login
+- **Guests**: Can browse cars, search by brand, and register/login
 - **Customers**: Can purchase cars and view purchase history
-- **Admins**: Can manage dealerships, inventory, and view sales reports
+- **Admins**: Can manage dealerships, add cars to inventory, and view sales reports
+
+## Sample Login Credentials
+
+After running the seed script, you can use these accounts:
+- **Admin**: username: `admin1`, password: `password123`
+- **Customer**: username: `john_doe`, password: `password123`
+
+## Project Structure
+
+- `lib/cli.py`: Main CLI interface with role-based menus
+- `lib/helpers.py`: Helper functions for all operations
+- `lib/models/`: Database models (User, Dealership, Car, Sale)
+- `lib/db/seed.py`: Database seeding with sample data
+- `lib/debug.py`: Debug utilities for testing
