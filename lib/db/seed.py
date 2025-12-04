@@ -52,3 +52,35 @@ def seed_dealerships(users):
         print(f"✅ Created dealership: {name} (Admin: {admin.username})")
     
     return dealerships
+
+def seed_cars(dealerships):
+    """Create sample car inventory"""
+    car_brands = ["Toyota", "Honda", "BMW", "Mercedes", "Audi", "Ford", "Chevrolet", "Nissan"]
+    car_models = {
+        "Toyota": ["Camry", "Corolla", "RAV4", "Prius"],
+        "Honda": ["Civic", "Accord", "CR-V", "Pilot"],
+        "BMW": ["3 Series", "5 Series", "X3", "X5"],
+        "Mercedes": ["C-Class", "E-Class", "GLC", "GLE"],
+        "Audi": ["A4", "A6", "Q5", "Q7"],
+        "Ford": ["F-150", "Mustang", "Explorer", "Escape"],
+        "Chevrolet": ["Silverado", "Equinox", "Malibu", "Tahoe"],
+        "Nissan": ["Altima", "Sentra", "Rogue", "Pathfinder"]
+    }
+    colors = ["Black", "White", "Silver", "Red", "Blue", "Gray"]
+    
+    cars = []
+    for dealership in dealerships:
+        num_cars = random.randint(8, 12)
+        for _ in range(num_cars):
+            brand = random.choice(car_brands)
+            model = random.choice(car_models[brand])
+            year = random.randint(2018, 2024)
+            price = random.randint(15000, 80000)
+            color = random.choice(colors)
+            
+            car = Car.create(brand, model, year, price, color, dealership.id)
+            cars.append(car)
+        
+        print(f"✅ Created {num_cars} cars for {dealership.name}")
+    
+    return cars
