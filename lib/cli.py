@@ -56,5 +56,27 @@ def customer_menu():
     print("7. Logout")
     print("0. Exit")
 
+def admin_menu():
+    """Display menu for authenticated admins"""
+    print("\n" + "="*50)
+    print(f"👑 ADMIN MENU - Welcome, {current_user.username}!")
+    print("="*50)
+    print("🏢 DEALERSHIP MANAGEMENT:")
+    print("1. Create Dealership")
+    print("2. View My Dealerships")
+    print("3. View All Dealerships")
+    print("4. Delete Dealership")
+    print("\n🚗 CAR MANAGEMENT:")
+    print("5. View All Cars")
+    print("6. View Available Cars")
+    print("7. Search Cars by Brand")
+    print("\n👥 USER MANAGEMENT:")
+    print("8. View All Users")
+    print("9. Delete User")
+    print("\n📊 SYSTEM:")
+    print("10. System Statistics")
+    print("11. Logout")
+    print("0. Exit")
+
 if __name__ == "__main__":
     main()
