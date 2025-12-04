@@ -117,3 +117,43 @@ def list_dealerships():
     for dealership in dealerships:
         print(f"ID: {dealership.id} | {dealership.name} - {dealership.location}")
         print(f"   Admin: {dealership.admin.username} | Cars: {dealership.car_count} | Sales: {dealership.total_sales}")
+
+def view_my_dealerships():
+    """View dealerships owned by current admin"""
+    if not current_user or not current_user.is_admin:
+        print("❌ Admin access required!")
+        return
+    
+    dealerships = Dealership.find_by_admin(current_user.id)
+    if not dealerships:
+        print("📭 You don't own any dealerships.")
+        return
+    
+    print(f"\n=== {current_user.username.upper()}'S DEALERSHIPS ===")
+    for dealership in dealerships:
+        print(f"ID: {dealership.id} | {dealership.name} - {dealership.location}")
+        print(f"   Cars: {dealership.car_count} | Sales: {dealership.total_sales}")
+
+def delete_dealership():
+    """Delete a dealership"""
+    if not current_user or not current_user.is_admin:
+        print("❌ Admin access required!")
+        return
+    
+    view_my_dealerships()
+    try:
+        dealership_id = int(input("\nEnter dealership ID to delete: "))
+        dealership = Dealership.find_by_id(dealership_id)
+        
+        if not dealership:
+            print("❌ Dealership not found!")
+            return
+        
+        if dealership.admin_id != current_user.id:
+            print("❌ You can only delete your own dealerships!")
+            return
+        
+        dealership.delete()
+        print(f"✅ Dealership '{dealership.name}' deleted successfully!")
+    except ValueError:
+        print("❌ Invalid dealership ID!")
