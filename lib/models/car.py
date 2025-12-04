@@ -54,3 +54,21 @@ class Car(Base):
             return session.query(cls).all()
         finally:
             session.close()
+    
+    @classmethod
+    def get_available(cls):
+        """Get all available cars"""
+        session = get_session()
+        try:
+            return session.query(cls).filter(cls.is_sold == False).all()
+        finally:
+            session.close()
+    
+    @classmethod
+    def find_by_id(cls, car_id):
+        """Find car by ID"""
+        session = get_session()
+        try:
+            return session.query(cls).filter(cls.id == car_id).first()
+        finally:
+            session.close()
