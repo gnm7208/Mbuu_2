@@ -157,3 +157,42 @@ def delete_dealership():
         print(f"✅ Dealership '{dealership.name}' deleted successfully!")
     except ValueError:
         print("❌ Invalid dealership ID!")
+
+# Car Management Functions
+def list_all_cars():
+    """Display all cars"""
+    cars = Car.get_all()
+    if not cars:
+        print("📭 No cars found.")
+        return
+    
+    print("\n=== ALL CARS ===")
+    for car in cars:
+        print(f"ID: {car.id} | {car.full_description}")
+        print(f"   Dealership: {car.dealership.name}")
+
+def list_available_cars():
+    """Display available cars for purchase"""
+    cars = Car.get_available()
+    if not cars:
+        print("📭 No cars available for purchase.")
+        return
+    
+    print("\n=== AVAILABLE CARS ===")
+    for car in cars:
+        print(f"ID: {car.id} | {car.full_description}")
+        print(f"   Dealership: {car.dealership.name} - {car.dealership.location}")
+
+def search_cars_by_brand():
+    """Search cars by brand"""
+    brand = input("Enter brand to search: ").strip()
+    cars = Car.find_by_brand(brand)
+    
+    if not cars:
+        print(f"📭 No cars found for brand: {brand}")
+        return
+    
+    print(f"\n=== CARS MATCHING '{brand.upper()}' ===")
+    for car in cars:
+        print(f"ID: {car.id} | {car.full_description}")
+        print(f"   Dealership: {car.dealership.name}")
