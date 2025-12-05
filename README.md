@@ -105,6 +105,28 @@ The application provides different interfaces based on user role:
 - **Customers**: Can purchase cars and view purchase history
 - **Admins**: Can manage dealerships, add cars to inventory, and view sales reports
 
+Web frontend & API (development)
+--------------------------------
+
+I added a minimal frontend scaffold in the `web/` directory (Vite + React + Tailwind) and a small Flask API in `lib/web_api.py`.
+
+To run the backend API (development):
+
+```bash
+pipenv install -r requirements.txt
+pipenv run python lib/web_api.py
+```
+
+To run the frontend (development):
+
+```bash
+cd web
+npm install
+npm run dev
+```
+
+The frontend expects the API at `/api/*` relative to the same host. When developing, run the backend on port 5001 and configure a proxy in Vite if needed.
+
 ## Sample Login Credentials
 
 After running the seed script, you can use these accounts:
