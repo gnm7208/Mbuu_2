@@ -30,10 +30,7 @@ export default function Home() {
     return (
       <div className="p-6 max-w-md mx-auto">
         <h2 className="text-2xl font-semibold mb-4">Welcome to Mbuu</h2>
-        <form onSubmit={handleLogin} className="space-y-4">
-          <input name="username" placeholder="Enter username" className="w-full p-2 border rounded" />
-          <button className="px-4 py-2 bg-blue-600 text-white rounded">Continue</button>
-        </form>
+        <TabAuth onAuth={(data) => { setUser(data.username || data.entered); setRoleInfo(data.role || 'guest'); }} />
       </div>
     )
   }
