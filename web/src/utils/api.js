@@ -7,6 +7,15 @@ export async function postAuth(username) {
   return res.json()
 }
 
+export async function registerUser(payload) {
+  const res = await fetch('/api/register', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload)
+  })
+  return res.json()
+}
+
 export async function fetchCars(params = {}) {
   const qs = new URLSearchParams(params).toString()
   const res = await fetch('/api/cars' + (qs ? `?${qs}` : ''))
