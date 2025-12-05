@@ -2,9 +2,80 @@ from models.user import User
 from models.dealership import Dealership
 from models.car import Car
 from models.sale import Sale
+from typing import Optional
 
 # Global variable to track current logged-in user
 current_user = None
+
+# ============================================================================
+# VALIDATION HELPERS
+# ============================================================================
+
+def validate_integer_input(prompt: str, min_val: Optional[int] = None, max_val: Optional[int] = None) -> Optional[int]:
+    """
+    Validate and get integer input from user.
+    
+    Args:
+        prompt: Input prompt message
+        min_val: Minimum allowed value (optional)
+        max_val: Maximum allowed value (optional)
+    
+    Returns:
+        Integer value if valid, None if invalid
+    """
+    try:
+        value = int(input(prompt))
+        if min_val is not None and value < min_val:
+            print(f"❌ Value must be at least {min_val}")
+            return None
+        if max_val is not None and value > max_val:
+            print(f"❌ Value must be at most {max_val}")
+            return None
+        return value
+    except ValueError:
+        print("❌ Please enter a valid number!")
+        return None
+
+def validate_float_input(prompt: str, min_val: Optional[float] = None) -> Optional[float]:
+    """
+    Validate and get float input from user.
+    
+    Args:
+        prompt: Input prompt message
+        min_val: Minimum allowed value (optional)
+    
+    Returns:
+        Float value if valid, None if invalid
+    """
+    try:
+        value = float(input(prompt))
+        if min_val is not None and value < min_val:
+            print(f"❌ Value must be at least {min_val}")
+            return None
+        return value
+    except ValueError:
+        print("❌ Please enter a valid number!")
+        return None
+
+def validate_required_field(value: str, field_name: str = "Field") -> bool:
+    """
+    Validate that a field is not empty.
+    
+    Args:
+        value: Value to check
+        field_name: Name of the field (for error message)
+    
+    Returns:
+        True if valid, False otherwise
+    """
+    if not value or not value.strip():
+        print(f"❌ {field_name} is required!")
+        return False
+    return True
+
+# ============================================================================
+# CORE FUNCTIONALITY
+# ============================================================================
 
 def exit_program():
     """Exit the application"""
@@ -29,21 +100,50 @@ def authenticate_user():
 
 def register_user():
     """Handle user registration"""
+    global current_user
     print("\n=== REGISTER ===")
     username = input("Username: ").strip()
     email = input("Email: ").strip()
     password = input("Password: ").strip()
     
+    # Role selection
+    print("\nSelect account type:")
+    print("1. Customer")
+    print("2. Admin")
+    role_choice = input("Choice (1-2): ").strip()
+    
+    if role_choice == "1":
+        is_admin = False
+        role_name = "Customer"
+    elif role_choice == "2":
+        is_admin = True
+        role_name = "Admin"
+    else:
+        print("❌ Invalid choice! Defaulting to Customer.")
+        is_admin = False
+        role_name = "Customer"
+    
+    # Check for existing username
     if User.find_by_username(username):
         print("❌ Username already exists!")
         return False
     
+    # Check for existing email
+    existing_users = User.get_all()
+    if any(u.email == email for u in existing_users):
+        print("❌ Email already exists!")
+        return False
+    
     try:
-        user = User.create(username, email, password, False)
-        print(f"✅ Account created successfully! Welcome, {username}!")
+        user = User.create(username, email, password, is_admin)
+        current_user = user  # Auto-login after registration
+        print(f"✅ {role_name} account created successfully! Welcome, {username}!")
         return True
     except Exception as e:
-        print(f"❌ Registration failed: {str(e)}")
+        if "UNIQUE constraint failed" in str(e):
+            print("❌ Username or email already exists!")
+        else:
+            print(f"❌ Registration failed: {str(e)}")
         return False
 
 def logout_user():
@@ -297,25 +397,35 @@ def add_car():
         print(f"{i}. {dealership.name}")
     
     try:
-        choice = int(input("Select dealership (number): ")) - 1
-        if choice < 0 or choice >= len(dealerships):
-            print("❌ Invalid selection!")
+        choice = validate_integer_input("Select dealership (number): ", 1, len(dealerships))
+        if choice is None:
             return
         
-        dealership = dealerships[choice]
+        dealership = dealerships[choice - 1]
         
         brand = input("Car brand: ").strip()
-        model = input("Car model: ").strip()
-        year = int(input("Year: "))
-        price = float(input("Price: $"))
-        color = input("Color: ").strip()
+        if not validate_required_field(brand, "Brand"):
+            return
         
-        if not all([brand, model, color]) or year < 1900 or price <= 0:
-            print("❌ Invalid car details!")
+        model = input("Car model: ").strip()
+        if not validate_required_field(model, "Model"):
+            return
+        
+        year = validate_integer_input("Year: ", 1900, 2100)
+        if year is None:
+            return
+        
+        price = validate_float_input("Price: $", 0)
+        if price is None or price <= 0:
+            print("❌ Price must be greater than 0!")
+            return
+        
+        color = input("Color: ").strip()
+        if not validate_required_field(color, "Color"):
             return
         
         car = Car.create(brand, model, year, price, color, dealership.id)
         print(f"✅ {year} {brand} {model} added to {dealership.name}!")
         
-    except (ValueError, IndexError):
-        print("❌ Invalid input!")
+    except (IndexError, Exception) as e:
+        print(f"❌ Error adding car: {str(e)}")

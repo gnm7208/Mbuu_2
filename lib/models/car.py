@@ -51,7 +51,11 @@ class Car(Base):
         """Get all cars"""
         session = get_session()
         try:
-            return session.query(cls).all()
+            cars = session.query(cls).all()
+            # Trigger lazy loading while session is open
+            for car in cars:
+                _ = car.dealership.name
+            return cars
         finally:
             session.close()
     
@@ -60,7 +64,11 @@ class Car(Base):
         """Get all available cars"""
         session = get_session()
         try:
-            return session.query(cls).filter(cls.is_sold == False).all()
+            cars = session.query(cls).filter(cls.is_sold == False).all()
+            # Trigger lazy loading while session is open
+            for car in cars:
+                _ = car.dealership.name
+            return cars
         finally:
             session.close()
     
@@ -69,7 +77,11 @@ class Car(Base):
         """Find car by ID"""
         session = get_session()
         try:
-            return session.query(cls).filter(cls.id == car_id).first()
+            car = session.query(cls).filter(cls.id == car_id).first()
+            if car:
+                # Trigger lazy loading while session is open
+                _ = car.dealership.name
+            return car
         finally:
             session.close()
     
@@ -78,7 +90,11 @@ class Car(Base):
         """Find cars by brand"""
         session = get_session()
         try:
-            return session.query(cls).filter(cls.brand.ilike(f"%{brand}%")).all()
+            cars = session.query(cls).filter(cls.brand.ilike(f"%{brand}%")).all()
+            # Trigger lazy loading while session is open
+            for car in cars:
+                _ = car.dealership.name
+            return cars
         finally:
             session.close()
     
@@ -86,8 +102,10 @@ class Car(Base):
         """Mark car as sold"""
         session = get_session()
         try:
-            self.is_sold = True
+            car = session.merge(self)
+            car.is_sold = True
             session.commit()
+            self.is_sold = True  # Update local object too
         except Exception as e:
             session.rollback()
             raise e

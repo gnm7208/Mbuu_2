@@ -1,5 +1,10 @@
 #!/usr/bin/env python3
 
+"""
+CLI Interface for Mbuu - Car Dealership Management System
+Provides menu-driven interface for user interaction
+"""
+
 from helpers import (
     exit_program, authenticate_user, register_user, logout_user,
     list_all_users, delete_user, create_dealership, list_dealerships,
@@ -8,6 +13,44 @@ from helpers import (
     view_my_purchases, display_stats, current_user
 )
 
+# Menu choices dictionary for all roles
+MENU_CHOICES = {
+    "guest": {
+        "1": authenticate_user,
+        "2": register_user,
+        "3": list_available_cars,
+        "4": search_cars_by_brand,
+        "5": list_dealerships,
+        "6": display_stats,
+        "0": exit_program
+    },
+    "admin": {
+        "1": create_dealership,
+        "2": view_my_dealerships,
+        "3": list_dealerships,
+        "4": delete_dealership,
+        "5": add_car,
+        "6": list_all_cars,
+        "7": list_available_cars,
+        "8": search_cars_by_brand,
+        "9": list_all_users,
+        "10": delete_user,
+        "11": display_stats,
+        "12": logout_user,
+        "0": exit_program
+    },
+    "customer": {
+        "1": list_available_cars,
+        "2": search_cars_by_brand,
+        "3": purchase_car,
+        "4": view_my_purchases,
+        "5": list_dealerships,
+        "6": display_stats,
+        "7": logout_user,
+        "0": exit_program
+    }
+}
+
 def main():
     """Main CLI loop"""
     print("🚗 Welcome to Mbuu - Car Dealership Management System! 🚗")
@@ -15,14 +58,17 @@ def main():
     while True:
         if not current_user:
             guest_menu()
+            menu_type = "guest"
         elif current_user.is_admin:
             admin_menu()
+            menu_type = "admin"
         else:
             customer_menu()
+            menu_type = "customer"
         
         try:
             choice = input("\n> ").strip()
-            handle_menu_choice(choice)
+            handle_menu_choice(choice, menu_type)
         except KeyboardInterrupt:
             print("\n\n👋 Goodbye!")
             break
@@ -79,62 +125,20 @@ def admin_menu():
     print("12. Logout")
     print("0. Exit")
 
-def handle_menu_choice(choice):
-    """Handle menu selection based on user type and choice"""
-    if not current_user:  # Guest menu
-        guest_choices = {
-            "1": authenticate_user,
-            "2": register_user,
-            "3": list_available_cars,
-            "4": search_cars_by_brand,
-            "5": list_dealerships,
-            "6": display_stats,
-            "0": exit_program
-        }
-        
-        if choice in guest_choices:
-            guest_choices[choice]()
-        else:
-            print("❌ Invalid choice! Please select a valid option.")
+def handle_menu_choice(choice: str, menu_type: str) -> None:
+    """
+    Handle menu selection based on user type and choice.
     
-    elif current_user.is_admin:  # Admin menu
-        admin_choices = {
-            "1": create_dealership,
-            "2": view_my_dealerships,
-            "3": list_dealerships,
-            "4": delete_dealership,
-            "5": add_car,
-            "6": list_all_cars,
-            "7": list_available_cars,
-            "8": search_cars_by_brand,
-            "9": list_all_users,
-            "10": delete_user,
-            "11": display_stats,
-            "12": logout_user,
-            "0": exit_program
-        }
-        
-        if choice in admin_choices:
-            admin_choices[choice]()
-        else:
-            print("❌ Invalid choice! Please select a valid option.")
+    Args:
+        choice: User's menu selection
+        menu_type: Type of menu ("guest", "admin", "customer")
+    """
+    choices_dict = MENU_CHOICES.get(menu_type, {})
     
-    else:  # Customer menu
-        customer_choices = {
-            "1": list_available_cars,
-            "2": search_cars_by_brand,
-            "3": purchase_car,
-            "4": view_my_purchases,
-            "5": list_dealerships,
-            "6": display_stats,
-            "7": logout_user,
-            "0": exit_program
-        }
-        
-        if choice in customer_choices:
-            customer_choices[choice]()
-        else:
-            print("❌ Invalid choice! Please select a valid option.")
+    if choice in choices_dict:
+        choices_dict[choice]()
+    else:
+        print("❌ Invalid choice! Please select a valid option.")
 
 if __name__ == "__main__":
     main()

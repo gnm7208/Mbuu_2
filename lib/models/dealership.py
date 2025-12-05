@@ -18,12 +18,22 @@ class Dealership(Base):
     @property
     def car_count(self):
         """Return number of cars in dealership"""
-        return len(self.cars)
+        session = get_session()
+        try:
+            from .car import Car
+            return session.query(Car).filter(Car.dealership_id == self.id).count()
+        finally:
+            session.close()
     
     @property
     def total_sales(self):
         """Return total number of sales"""
-        return len(self.sales)
+        session = get_session()
+        try:
+            from .sale import Sale
+            return session.query(Sale).filter(Sale.dealership_id == self.id).count()
+        finally:
+            session.close()
     
     @classmethod
     def create(cls, name, location, admin_id):
@@ -46,7 +56,13 @@ class Dealership(Base):
         """Get all dealerships"""
         session = get_session()
         try:
-            return session.query(cls).all()
+            dealerships = session.query(cls).all()
+            # Trigger lazy loading while session is open
+            for dealership in dealerships:
+                _ = dealership.admin.username
+                _ = len(dealership.cars)
+                _ = len(dealership.sales)
+            return dealerships
         finally:
             session.close()
     
@@ -64,7 +80,13 @@ class Dealership(Base):
         """Find dealerships by admin ID"""
         session = get_session()
         try:
-            return session.query(cls).filter(cls.admin_id == admin_id).all()
+            dealerships = session.query(cls).filter(cls.admin_id == admin_id).all()
+            # Trigger lazy loading while session is open
+            for dealership in dealerships:
+                _ = dealership.admin.username
+                _ = len(dealership.cars)  # Load cars relationship
+                _ = len(dealership.sales)  # Load sales relationship
+            return dealerships
         finally:
             session.close()
     

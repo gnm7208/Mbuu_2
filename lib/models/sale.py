@@ -63,7 +63,12 @@ class Sale(Base):
         """Find sales by customer ID"""
         session = get_session()
         try:
-            return session.query(cls).filter(cls.customer_id == customer_id).all()
+            sales = session.query(cls).filter(cls.customer_id == customer_id).all()
+            # Trigger lazy loading while session is open
+            for sale in sales:
+                _ = sale.car.brand
+                _ = sale.dealership.name
+            return sales
         finally:
             session.close()
     
