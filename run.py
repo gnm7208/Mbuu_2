@@ -27,11 +27,14 @@ def main():
         try:
             choice = input("\n> ").strip()
             handle_menu_choice(choice)
+            if choice != "0":  # Don't pause on exit
+                input("\nPress Enter to continue...")
         except KeyboardInterrupt:
             print("\n\n👋 Goodbye!")
             break
         except Exception as e:
             print(f"❌ An error occurred: {str(e)}")
+            input("\nPress Enter to continue...")
 
 def guest_menu():
     print("\n" + "="*50)
