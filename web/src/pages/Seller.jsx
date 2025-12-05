@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react'
+import { fetchDealerships } from '../utils/api'
 
 export default function Seller() {
   const [biz, setBiz] = useState([])
 
   useEffect(() => {
-    fetch('/api/dealerships')
-      .then(r => r.json())
+    fetchDealerships()
       .then(setBiz)
       .catch(console.error)
   }, [])
