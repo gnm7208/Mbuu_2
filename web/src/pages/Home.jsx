@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import Buyer from './Buyer'
 import Seller from './Seller'
 import Header from '../components/Header'
+import TabAuth from '../components/TabAuth'
 
 export default function Home() {
   const [user, setUser] = useState(null)

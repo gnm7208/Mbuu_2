@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { fetchDealerships } from '../utils/api'
+import { fetchDealerships, createDealership, createCar } from '../utils/api'
 
 export default function Seller() {
   const [biz, setBiz] = useState([])
