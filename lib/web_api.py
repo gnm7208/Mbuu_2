@@ -128,5 +128,114 @@ def api_sales():
         })
     return jsonify(result)
 
+
+@app.route('/api/register', methods=['POST'])
+def api_register():
+    data = request.get_json() or {}
+    username = data.get('username')
+    email = data.get('email')
+    password = data.get('password')
+    is_admin = data.get('is_admin', False)
+
+    if not username or not email or not password:
+        return jsonify({"error": "username, email and password are required"}), 400
+
+    if User.find_by_username(username):
+        return jsonify({"error": "username already exists"}), 400
+
+    # naive registration (no hashing) — this project uses plain text passwords for simplicity
+    try:
+        user = User.create(username=username, email=email, password=password, is_admin=bool(is_admin))
+        return jsonify({"id": user.id, "username": user.username, "email": user.email, "is_admin": bool(user.is_admin)})
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
+@app.route('/api/dealerships', methods=['POST'])
+def api_create_dealership():
+    data = request.get_json() or {}
+    name = data.get('name')
+    location = data.get('location')
+    admin_id = data.get('admin_id')
+
+    if not name or not location or not admin_id:
+        return jsonify({"error": "name, location and admin_id are required"}), 400
+
+    admin = User.find_by_id(admin_id)
+    if not admin:
+        return jsonify({"error": "admin user not found"}), 404
+    if not admin.is_admin:
+        return jsonify({"error": "user is not an admin"}), 403
+
+    try:
+        d = Dealership.create(name=name, location=location, admin_id=admin_id)
+        return jsonify({"id": d.id, "name": d.name, "location": d.location, "admin_id": d.admin_id})
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
+@app.route('/api/cars', methods=['POST'])
+def api_create_car():
+    data = request.get_json() or {}
+    brand = data.get('brand')
+    model_name = data.get('model')
+    year = data.get('year')
+    price = data.get('price')
+    color = data.get('color')
+    dealership_id = data.get('dealership_id')
+
+    if not all([brand, model_name, year, price, color, dealership_id]):
+        return jsonify({"error": "brand, model, year, price, color, dealership_id are required"}), 400
+
+    # basic conversions
+    try:
+        year = int(year)
+        price = float(price)
+    except ValueError:
+        return jsonify({"error": "invalid year or price format"}), 400
+
+    d = Dealership.find_by_id(dealership_id)
+    if not d:
+        return jsonify({"error": "dealership not found"}), 404
+
+    try:
+        car = Car.create(brand=brand, model=model_name, year=year, price=price, color=color, dealership_id=dealership_id)
+        return jsonify(car_to_dict(car))
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
+@app.route('/api/cars/<int:car_id>/sell', methods=['POST'])
+def api_sell_car(car_id):
+    data = request.get_json() or {}
+    customer_id = data.get('customer_id')
+    sale_price = data.get('sale_price')
+
+    if not customer_id or not sale_price:
+        return jsonify({"error": "customer_id and sale_price are required"}), 400
+
+    try:
+        sale_price = float(sale_price)
+    except ValueError:
+        return jsonify({"error": "invalid sale_price"}), 400
+
+    car = Car.find_by_id(car_id)
+    if not car:
+        return jsonify({"error": "car not found"}), 404
+    if car.is_sold:
+        return jsonify({"error": "car already sold"}), 400
+
+    customer = User.find_by_id(customer_id)
+    if not customer:
+        return jsonify({"error": "customer not found"}), 404
+
+    try:
+        sale = Sale.create(customer_id=customer_id, car_id=car_id, dealership_id=car.dealership_id, sale_price=sale_price)
+        car.mark_sold()
+        return jsonify({"sale_id": sale.id, "car_id": car_id, "sale_price": float(sale.sale_price)})
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5001, debug=True)
