@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import Buyer from './Buyer'
 import Seller from './Seller'
+import Header from '../components/Header'
 
 export default function Home() {
   const [user, setUser] = useState(null)
@@ -38,15 +39,18 @@ export default function Home() {
   }
 
   return (
-    <div className="p-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h2 className="text-xl font-semibold">Hello, {user}</h2>
-          <p className="text-sm text-slate-600 dark:text-slate-400">Role: {roleInfo}</p>
+    <div>
+      <Header user={user} onLogout={() => { setUser(null); setRoleInfo(null); }} />
+      <div className="p-6">
+        <div className="flex items-center justify-between">
+          <div>
+            <h2 className="text-xl font-semibold">Hello, {user}</h2>
+            <p className="text-sm text-slate-600 dark:text-slate-400">Role: {roleInfo}</p>
+          </div>
         </div>
-      </div>
-      <div className="mt-6">
-        {roleInfo === 'admin' ? <Seller /> : <Buyer />}
+        <div className="mt-6">
+          {roleInfo === 'admin' ? <Seller /> : <Buyer />}
+        </div>
       </div>
     </div>
   )
