@@ -26,12 +26,25 @@ def main():
         
         try:
             choice = input("\n> ").strip()
+            
+            if choice == "0":
+                exit_program()
+                break
+            
             handle_menu_choice(choice)
+            
+            # Pause before showing menu again
+            print("\n" + "="*50)
+            input("Press Enter to continue...")
+            print("\n" * 2)
+            
         except KeyboardInterrupt:
             print("\n\n👋 Goodbye!")
             break
         except Exception as e:
             print(f"❌ An error occurred: {str(e)}")
+            input("\nPress Enter to continue...")
+            print("\n" * 2)
 
 def guest_menu():
     print("\n" + "="*50)
@@ -85,8 +98,7 @@ def handle_menu_choice(choice):
             "3": list_available_cars,
             "4": search_cars_by_brand,
             "5": list_dealerships,
-            "6": display_stats,
-            "0": exit_program
+            "6": display_stats
         }
         
         if choice in guest_choices:
@@ -105,8 +117,7 @@ def handle_menu_choice(choice):
             "7": list_available_cars,
             "8": search_cars_by_brand,
             "9": display_stats,
-            "10": logout_user,
-            "0": exit_program
+            "10": logout_user
         }
         
         if choice in admin_choices:
@@ -122,8 +133,7 @@ def handle_menu_choice(choice):
             "4": view_my_purchases,
             "5": list_dealerships,
             "6": display_stats,
-            "7": logout_user,
-            "0": exit_program
+            "7": logout_user
         }
         
         if choice in customer_choices:

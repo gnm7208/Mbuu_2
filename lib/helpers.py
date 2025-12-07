@@ -87,7 +87,10 @@ def authenticate_user():
     global current_user
     print("\n=== LOGIN ===")
     username = input("Username: ").strip()
+    print(f"  [You entered: {username}]")
+    
     password = input("Password: ").strip()
+    print(f"  [You entered: {'*' * len(password)}]")
     
     user = User.find_by_username(username)
     if user and user.password == password:
@@ -103,14 +106,20 @@ def register_user():
     global current_user
     print("\n=== REGISTER ===")
     username = input("Username: ").strip()
+    print(f"  [You entered: {username}]")
+    
     email = input("Email: ").strip()
+    print(f"  [You entered: {email}]")
+    
     password = input("Password: ").strip()
+    print(f"  [You entered: {'*' * len(password)}]")
     
     # Role selection
     print("\nSelect account type:")
     print("1. Customer")
     print("2. Admin")
     role_choice = input("Choice (1-2): ").strip()
+    print(f"  [You entered: {role_choice}]")
     
     if role_choice == "1":
         is_admin = False
@@ -194,7 +203,10 @@ def create_dealership():
     
     print("\n=== CREATE DEALERSHIP ===")
     name = input("Dealership name: ").strip()
+    print(f"  [You entered: {name}]")
+    
     location = input("Location: ").strip()
+    print(f"  [You entered: {location}]")
     
     if not name or not location:
         print("❌ Name and location are required!")
@@ -404,23 +416,28 @@ def add_car():
         dealership = dealerships[choice - 1]
         
         brand = input("Car brand: ").strip()
+        print(f"  [You entered: {brand}]")
         if not validate_required_field(brand, "Brand"):
             return
         
         model = input("Car model: ").strip()
+        print(f"  [You entered: {model}]")
         if not validate_required_field(model, "Model"):
             return
         
         year = validate_integer_input("Year: ", 1900, 2100)
         if year is None:
             return
+        print(f"  [You entered: {year}]")
         
         price = validate_float_input("Price: $", 0)
         if price is None or price <= 0:
             print("❌ Price must be greater than 0!")
             return
+        print(f"  [You entered: ${price}]")
         
         color = input("Color: ").strip()
+        print(f"  [You entered: {color}]")
         if not validate_required_field(color, "Color"):
             return
         

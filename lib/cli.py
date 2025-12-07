@@ -5,6 +5,8 @@ CLI Interface for Mbuu - Car Dealership Management System
 Provides menu-driven interface for user interaction
 """
 
+import sys
+
 from helpers import (
     exit_program, authenticate_user, register_user, logout_user,
     list_all_users, delete_user, create_dealership, list_dealerships,
@@ -21,8 +23,7 @@ MENU_CHOICES = {
         "3": list_available_cars,
         "4": search_cars_by_brand,
         "5": list_dealerships,
-        "6": display_stats,
-        "0": exit_program
+        "6": display_stats
     },
     "admin": {
         "1": create_dealership,
@@ -36,8 +37,7 @@ MENU_CHOICES = {
         "9": list_all_users,
         "10": delete_user,
         "11": display_stats,
-        "12": logout_user,
-        "0": exit_program
+        "12": logout_user
     },
     "customer": {
         "1": list_available_cars,
@@ -46,8 +46,7 @@ MENU_CHOICES = {
         "4": view_my_purchases,
         "5": list_dealerships,
         "6": display_stats,
-        "7": logout_user,
-        "0": exit_program
+        "7": logout_user
     }
 }
 
@@ -56,24 +55,46 @@ def main():
     print("🚗 Welcome to Mbuu - Car Dealership Management System! 🚗")
     
     while True:
+        # Determine menu type
         if not current_user:
-            guest_menu()
             menu_type = "guest"
         elif current_user.is_admin:
-            admin_menu()
             menu_type = "admin"
         else:
-            customer_menu()
             menu_type = "customer"
+        
+        # Display appropriate menu
+        if menu_type == "guest":
+            guest_menu()
+        elif menu_type == "admin":
+            admin_menu()
+        else:
+            customer_menu()
         
         try:
             choice = input("\n> ").strip()
+            
+            # Handle exit separately
+            if choice == "0":
+                exit_program()
+                break
+            
             handle_menu_choice(choice, menu_type)
+            
+            # Pause before showing menu again
+            print("\n" + "="*50)
+            print("DEBUG: About to show prompt")
+            response = input("Press Enter to continue...")
+            print(f"DEBUG: User pressed Enter, response='{response}'")
+            print("\n" * 2)  # Add spacing
+            
         except KeyboardInterrupt:
             print("\n\n👋 Goodbye!")
             break
         except Exception as e:
             print(f"❌ An error occurred: {str(e)}")
+            input("\n\nPress Enter to continue...")
+            print("\n" * 2)
 
 def guest_menu():
     """Display menu for non-authenticated users"""
