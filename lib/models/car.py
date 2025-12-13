@@ -13,8 +13,10 @@ class Car(Base):
     color = Column(String(30), nullable=False)
     is_sold = Column(Boolean, default=False)
     dealership_id = Column(Integer, ForeignKey('dealerships.id'), nullable=False)
-    image_url = Column(String(300), nullable=True)
-    
+    images = relationship("CarImage", back_populates="car", cascade="all, delete-orphan")
+    description = Column(String(500), nullable=True)
+
+
     # Relationships
     dealership = relationship("Dealership", back_populates="cars")
     sale = relationship("Sale", back_populates="car", uselist=False)
