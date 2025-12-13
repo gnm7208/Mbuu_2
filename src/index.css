@@ -1,0 +1,25 @@
+:root {
+  --bg: #ffffff;
+  --text: #1f2937;
+  --card: #f3f4f6;
+  --primary: #2563eb;
+  --border: #e5e7eb;
+}
+:root[data-theme="dark"] {
+  --bg: #0b0f19;
+  --text: #e5e7eb;
+  --card: #111827;
+  --primary: #60a5fa;
+  --border: #374151;
+}
+body {
+  margin: 0; background: var(--bg); color: var(--text); font-family: system-ui, sans-serif;
+}
+.card {
+  background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 16px;
+}
+.btn { padding: 8px 12px; border: 1px solid var(--border); border-radius: 8px; background: transparent; color: var(--text); cursor: pointer; }
+.btn-primary { background: var(--primary); color: #fff; border: none; }
+input, select { padding: 8px; border-radius: 8px; border: 1px solid var(--border); background: transparent; color: var(--text); }
+header { border-bottom: 1px solid var(--border); }
+a { color: var(--text); text-decoration: none; }
