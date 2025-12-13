@@ -9,6 +9,7 @@ class Dealership(Base):
     name = Column(String(100), nullable=False)
     location = Column(String(200), nullable=False)
     admin_id = Column(Integer, ForeignKey('users.id'), nullable=False)
+    image_url = Column(String(300), nullable=True)
     
     # Relationships
     admin = relationship("User", back_populates="dealerships")

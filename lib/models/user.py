@@ -10,6 +10,7 @@ class User(Base):
     email = Column(String(100), unique=True, nullable=False)
     password = Column(String(100), nullable=False)
     is_admin = Column(Boolean, default=False)
+    profile_pic_url = Column(String(300), nullable=True)
     
     # Relationships
     dealerships = relationship("Dealership", back_populates="admin")

@@ -2,6 +2,10 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from api import auth, users, dealerships, cars, sales, uploads
+from fastapi.staticfiles import StaticFiles
+import os
+
+app.mount("/static", StaticFiles(directory=os.path.join(os.path.dirname(__file__), "uploads")), name="static")
 
 app = FastAPI(title="Mbuu API")
 
